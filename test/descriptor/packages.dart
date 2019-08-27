@@ -20,11 +20,15 @@ class PackagesFileDescriptor extends Descriptor {
   /// located on disk.
   final Map<String, String> _dependencies;
 
+  /// Default package name as written in the `.packages` file.
+  final String _defaultPackageName;
+
   /// Describes a `.packages` file with the given dependencies.
   ///
   /// [dependencies] maps package names to strings describing where the packages
   /// are located on disk.
-  PackagesFileDescriptor([this._dependencies]) : super('.packages');
+  PackagesFileDescriptor([this._dependencies, this._defaultPackageName])
+      : super('.packages');
 
   Future create([String parent]) {
     var contents = const <int>[];
@@ -34,6 +38,7 @@ class PackagesFileDescriptor extends Descriptor {
         String packagePath;
         if (_isSemver(version)) {
           // It's a cache reference.
+          // TODO: Add language versioning..
           packagePath = p.join(cachePath, "$package-$version");
         } else {
           // Otherwise it's a path relative to the pubspec file,
@@ -42,8 +47,11 @@ class PackagesFileDescriptor extends Descriptor {
         }
         mapping[package] = p.toUri(p.join(packagePath, "lib", ""));
       });
+      if (_defaultPackageName != null) {
+        mapping[''] = Uri.parse(_defaultPackageName);
+      }
       var buffer = StringBuffer();
-      packages_file.write(buffer, mapping);
+      packages_file.write(buffer, mapping, allowDefaultPackage: true);
       contents = utf8.encode(buffer.toString());
     }
     return File(p.join(parent ?? sandbox, name)).writeAsBytes(contents);
@@ -61,7 +69,8 @@ class PackagesFileDescriptor extends Descriptor {
     // the package file are themselves relative. We can't resolve against just
     // "." due to sdk#23809.
     var base = "/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p";
-    var map = packages_file.parse(bytes, Uri.parse(base));
+    var map =
+        packages_file.parse(bytes, Uri.parse(base), allowDefaultPackage: true);
 
     for (var package in _dependencies.keys) {
       if (!map.containsKey(package)) {
@@ -85,10 +94,18 @@ class PackagesFileDescriptor extends Descriptor {
       }
     }
 
+    if (_defaultPackageName != null &&
+        map[''].toString() != _defaultPackageName) {
+      fail('.packages file does not contain default package name '
+          'entry: ":$_defaultPackageName"');
+    }
+
     if (map.length != _dependencies.length) {
       for (var key in map.keys) {
         if (!_dependencies.containsKey(key)) {
-          fail(".packages file contains unexpected entry: $key");
+          if (_defaultPackageName == null || key != '') {
+            fail('.packages file contains unexpected entry: "$key"');
+          }
         }
       }
     }

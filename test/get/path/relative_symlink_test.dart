@@ -30,7 +30,7 @@ main() {
     await pubGet();
 
     await d.dir(appPath, [
-      d.packagesFile({'myapp': '.', 'foo': '../foo'})
+      d.packagesFile({'myapp': '.', 'foo': '../foo'}, 'myapp')
     ]).validate();
 
     await d.dir("moved").create();
@@ -43,7 +43,7 @@ main() {
 
     await d.dir("moved", [
       d.dir(appPath, [
-        d.packagesFile({'myapp': '.', 'foo': '../foo'})
+        d.packagesFile({'myapp': '.', 'foo': '../foo'}, 'myapp')
       ])
     ]).validate();
   });

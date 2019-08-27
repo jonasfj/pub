@@ -94,7 +94,7 @@ main() {
 
       await d.appDir({"foo": "any"}).create();
 
-      await createLockFile('myapp', hosted: {'foo': '1.2.4'});
+      await createLockAndPackageFile('myapp', hosted: {'foo': '1.2.4'});
 
       await pubCommand(command,
           args: ['--offline'],
@@ -115,7 +115,7 @@ main() {
 
       await d.appDir({"foo": "any"}).create();
 
-      await createLockFile('myapp', hosted: {'foo': '1.2.4'});
+      await createLockAndPackageFile('myapp', hosted: {'foo': '1.2.4'});
 
       await pubCommand(command, args: ['--offline']);
 
@@ -155,7 +155,7 @@ main() {
 
       await d.appDir({"foo": "any"}).create();
 
-      await createLockFile('myapp', hosted: {'foo': '1.2.3'});
+      await createLockAndPackageFile('myapp', hosted: {'foo': '1.2.4'});
 
       await pubCommand(command, args: ['--offline']);
 

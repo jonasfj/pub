@@ -205,7 +205,8 @@ class GlobalPackages {
 
     var lockFile = result.lockFile;
     _writeLockFile(dep.name, lockFile);
-    writeTextFile(_getPackagesFilePath(dep.name), lockFile.packagesFile(cache));
+    final packagesContents = await lockFile.packagesFile(cache);
+    writeTextFile(_getPackagesFilePath(dep.name), packagesContents);
 
     // Load the package graph from [result] so we don't need to re-parse all
     // the pubspecs.
@@ -234,7 +235,8 @@ class GlobalPackages {
       if (!fileExists(packagesFilePath)) {
         // A .packages file may not already exist if the global executable has a
         // 1.6-style lock file instead.
-        writeTextFile(packagesFilePath, entrypoint.packagesFileContents);
+        final packagesContents = await entrypoint.packagesFileContents();
+        writeTextFile(packagesFilePath, packagesContents);
       }
 
       // Try to avoid starting up an asset server to precompile packages if

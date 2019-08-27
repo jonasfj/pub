@@ -170,13 +170,16 @@ DirectoryDescriptor appDir([Map dependencies]) =>
 /// entries (one per key in [dependencies]), each with a path that contains
 /// either the version string (for a reference to the pub cache) or a
 /// path to a path dependency, relative to the application directory.
-Descriptor packagesFile([Map<String, String> dependencies]) =>
-    PackagesFileDescriptor(dependencies);
+Descriptor packagesFile([
+  Map<String, String> dependencies,
+  String defaultPackageName,
+]) =>
+    PackagesFileDescriptor(dependencies, defaultPackageName);
 
 /// Describes a `.packages` file in the application directory, including the
 /// implicit entry for the app itself.
 Descriptor appPackagesFile(Map<String, String> dependencies) {
   var copied = Map<String, String>.from(dependencies);
   copied["myapp"] = ".";
-  return dir(appPath, [packagesFile(copied)]);
+  return dir(appPath, [packagesFile(copied, 'myapp')]);
 }

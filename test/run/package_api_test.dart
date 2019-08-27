@@ -33,6 +33,10 @@ main() {
     ]).create();
 
     await pubGet();
+    // TODO: Remove hack, including the timeout of 90min :)
+    // print(d.sandbox);
+    // await Future.delayed(Duration(minutes: 60));
+
     var pub = await pubRun(args: ["bin/script"]);
 
     expect(pub.stdout, emits("null"));
@@ -43,7 +47,7 @@ main() {
     expect(pub.stdout,
         emits(p.toUri(p.join(d.sandbox, "foo/lib/resource.txt")).toString()));
     await pub.shouldExit(0);
-  });
+  }, timeout: Timeout(Duration(minutes: 90)));
 
   test('a snapshotted application sees a file: package root', () async {
     await servePackages((builder) {

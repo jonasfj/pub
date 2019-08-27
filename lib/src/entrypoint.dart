@@ -146,7 +146,8 @@ class Entrypoint {
   ///
   /// This is based on the package's lockfile, so it works whether or not a
   /// `.packages` file has been written.
-  String get packagesFileContents => lockFile.packagesFile(cache, root.name);
+  Future<String> packagesFileContents() => lockFile.packagesFile(
+      cache, root.name, root.pubspec.sdkConstraints[sdk.identifier]);
 
   /// The path to the directory containing dependency executable snapshots.
   String get _snapshotPath => p.join(cachePath, 'bin');
@@ -237,7 +238,7 @@ class Entrypoint {
     /// have to reload and reparse all the pubspecs.
     _packageGraph = PackageGraph.fromSolveResult(this, result);
 
-    writeTextFile(packagesFile, packagesFileContents);
+    writeTextFile(packagesFile, await packagesFileContents());
 
     try {
       if (precompile) {
@@ -503,11 +504,19 @@ class Entrypoint {
   /// Determines whether or not the `.packages` file is out of date with respect
   /// to the lockfile.
   ///
-  /// This will be `false` if the packages file contains dependencies that are
-  /// not in the lockfile or that don't match what's in there.
+  /// This will be `false` if the lockfile contains dependencies that are not
+  /// in the .packages or that don't match what's in there.
   bool _isPackagesFileUpToDate() {
     var packages = packages_file.parse(
-        File(packagesFile).readAsBytesSync(), p.toUri(packagesFile));
+      File(packagesFile).readAsBytesSync(),
+      p.toUri(packagesFile),
+      allowDefaultPackage: true,
+    );
+
+    // If missing default package name, then `.packages` should be updated.
+    if (packages[''] == null || packages[''].toString() != root.name) {
+      return false;
+    }
 
     return lockFile.packages.values.every((lockFileId) {
       // It's very unlikely that the lockfile is invalid here, but it's not

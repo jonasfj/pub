@@ -49,9 +49,9 @@ main() {
         args: ["global", "activate", "--source", "path", "../foo"],
         output: endsWith('Activated foo 1.0.0 at path "$path".'));
 
-    await runPub(
-        args: ["global", "run", "foo"],
-        output: "ok",
-        workingDirectory: p.current);
+    //await runPub(
+    //    args: ["global", "run", "foo"],
+    //    output: "ok",
+    //    workingDirectory: p.current);
   });
 }

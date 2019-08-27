@@ -46,7 +46,7 @@ main() {
         'foo': '../foo',
         'bar': '../bar',
         'shared': '../shared'
-      })
+      }, 'myapp')
     ]).validate();
   });
 }

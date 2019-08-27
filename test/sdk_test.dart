@@ -46,7 +46,7 @@ main() {
           'myapp': '.',
           'foo': p.join(d.sandbox, 'flutter', 'packages', 'foo'),
           'bar': '1.0.0'
-        })
+        }, 'myapp')
       ]).validate();
     });
 
@@ -61,7 +61,7 @@ main() {
         d.packagesFile({
           'myapp': '.',
           'baz': p.join(d.sandbox, 'flutter', 'bin', 'cache', 'pkg', 'baz')
-        })
+        }, 'myapp')
       ]).validate();
     });
 
@@ -98,7 +98,7 @@ main() {
           environment: {'FLUTTER_ROOT': p.join(d.sandbox, 'flutter')});
 
       await d.dir(appPath, [
-        d.packagesFile({'myapp': '.'})
+        d.packagesFile({'myapp': '.'}, 'myapp')
       ]).validate();
     });
 
@@ -178,7 +178,7 @@ main() {
           'myapp': '.',
           'foo': p.join(d.sandbox, 'fuchsia', 'packages', 'foo'),
           'bar': '1.0.0'
-        })
+        }, 'myapp')
       ]).validate();
     });
   });
