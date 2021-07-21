@@ -21,6 +21,9 @@ import '../validator.dart';
 /// [Utf8Codec] which allows malformed strings.
 const _utf8AllowMalformed = Utf8Codec(allowMalformed: true);
 
+/// Link to the documentation for the `false_leaks` key in `pubspec.yaml`.
+const _falseLeaksDocumentationLink = 'https://dart.dev/go/false-leaks';
+
 /// A validator that validates attempts to find secrets that are about to be
 /// accidentally leaked.
 @sealed
@@ -88,7 +91,7 @@ class LeakDetectionValidator extends Validator {
         if (files.length > 10) '...',
         '',
         'Add a git-ignore style patterns to `false_leaks` in `pubspec.yaml`',
-        'to ignore this. See https://dart.dev/go/false-leaks'
+        'to ignore this. See $_falseLeaksDocumentationLink'
       ].join('\n'));
     } else if (leaks.isNotEmpty) {
       // If we have 3 leaks we return all leaks, but only include the message
@@ -99,7 +102,7 @@ class LeakDetectionValidator extends Validator {
         [
           lastLeak.toString(),
           'Add a git-ignore style pattern to `false_leaks` in `pubspec.yaml`',
-          'to ignore this. See https://dart.dev/go/false-leaks',
+          'to ignore this. See $_falseLeaksDocumentationLink',
         ].join('\n'),
       ]);
     }
